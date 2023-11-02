@@ -16,7 +16,7 @@ const StartScreen = ({ navigation }) => {
             password: password
         }
 
-        fetch('http://192.168.1.105:8080/user/login', {
+        fetch('http://172.20.10.3:8080/user/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

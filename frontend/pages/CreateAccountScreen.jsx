@@ -34,7 +34,7 @@ const CreateAccountScreen = ({ navigation }) => {
             birthdate: date
         }
 
-        fetch("http://192.168.1.105:8080/user/sign-up", {
+        fetch("http://172.20.10.3:8080/user/sign-up", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

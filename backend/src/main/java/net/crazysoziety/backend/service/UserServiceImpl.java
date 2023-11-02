@@ -1,5 +1,7 @@
 package net.crazysoziety.backend.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import net.crazysoziety.backend.model.User;
 import net.crazysoziety.backend.repository.UserRepository;
@@ -9,13 +11,15 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -30,32 +34,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findNearbyUsers(double latitude, double longitude) {
-        List<User> allUsers = userRepository.findAll();
-
-        return allUsers.stream()
-                .filter(user -> isNearby(user.getLatitude(), user.getLongitude(), latitude, longitude))
-                .collect(Collectors.toList());
-    }
-
-    private boolean isNearby(double lat1, double lon1, double lat2, double lon2) {
-        double distance = calculateDistance(lat1, lon1, lat2, lon2);
-        return distance <= 0.01;
-    }
-
-    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int EARTH_RADIUS = 6371;
-
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLon/2) * Math.sin(dLon/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-        double distance = EARTH_RADIUS * c;
-
-        return distance;
+        double distanceInMeters = 10;
+        return userRepository.findNearbyUsers(latitude, longitude, distanceInMeters);
     }
 
     @Override
@@ -82,5 +62,16 @@ public class UserServiceImpl implements UserService {
             return new ArrayList<>();
         }
 
+    }
+
+    @Override
+    @Transactional
+    public void updateGeom(User user, double latitude, double longitude) {
+        String sql = "UPDATE users SET geom = ST_SetSRID(ST_Point(:longitude, :latitude), 4326) WHERE id = :userId";
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("latitude", latitude);
+        query.setParameter("longitude", longitude);
+        query.setParameter("userId", user.getId());
+        query.executeUpdate();
     }
 }

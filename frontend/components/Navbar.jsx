@@ -36,7 +36,7 @@ const Navbar = ({ user }) => {
             let location = await Location.getCurrentPositionAsync({});
             const { latitude, longitude } = location.coords;
     
-            await fetch('http://192.168.1.105:8080/user/update-location', {
+            await fetch('http://172.20.10.3:8080/user/update-location', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const Navbar = ({ user }) => {
         updateUserLocation();
         let location = await Location.getCurrentPositionAsync({});
         const { latitude, longitude } = location.coords;
-        const response = await fetch('http://192.168.1.105:8080/user/search', {
+        const response = await fetch('http://172.20.10.3:8080/user/search', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ const Navbar = ({ user }) => {
     }
 
     const handleAddUser = async (add) => {
-        await fetch('http://192.168.1.105:8080/user/friend/add', {
+        await fetch('http://172.20.10.3:8080/user/friend/add', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -171,7 +171,7 @@ const Navbar = ({ user }) => {
             {nearbyUsers.map((foundUser, i) => (
                 <View style={styles.foundUserCard} key={i}>
                     <Image 
-                        source={foundUser.profilePicture ? { uri: `http://192.168.1.105:8080/user/${foundUser.alias}/profilePicture` } : profilePlaceholderImage}
+                        source={foundUser.profilePicture ? { uri: `http://172.20.10.3:8080/user/${foundUser.alias}/profilePicture` } : profilePlaceholderImage}
                         style={{ width: 100, height: 100 }}
                     />
                     <View style={{ alignItems: "center" }}>

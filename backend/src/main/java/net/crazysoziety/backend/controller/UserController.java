@@ -108,6 +108,10 @@ public class UserController {
 
             user.setLatitude(locationRequest.getLatitude());
             user.setLongitude(locationRequest.getLongitude());
+
+            userService.saveUser(user);
+            userService.updateGeom(user, locationRequest.getLatitude(), locationRequest.getLongitude());
+
             userService.saveUser(user);
 
             return ResponseEntity.ok("Location updated successfully");

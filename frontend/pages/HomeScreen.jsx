@@ -21,7 +21,7 @@ const HomeScreen = ({ navigation }) => {
         await new Promise(resolve => setTimeout(resolve, 2000)); 
         
         const fetchAddedUsers = async (id) => {
-            const storedUsers = await fetch(`http://192.168.1.105:8080/user/${id}/addedUsers`)
+            const storedUsers = await fetch(`http://172.20.10.3:8080/user/${id}/addedUsers`)
             .then((res) => res.json())
     
             setAddedUsers(storedUsers);
@@ -54,7 +54,7 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     const fetchAddedUsers = async (id) => {
-        const storedUsers = await fetch(`http://192.168.1.105:8080/user/${id}/addedUsers`)
+        const storedUsers = await fetch(`http://172.20.10.3:8080/user/${id}/addedUsers`)
         .then((res) => res.json())
 
         setAddedUsers(storedUsers);
@@ -65,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
         return;
     }
 
-  }, [user])
+  })
 
   const handlePress = (userId) => {
     setOpenCards(prevState => {
@@ -74,7 +74,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const addToFavorites = async (alias) => {
-    await fetch(`http://192.168.1.105:8080/user/add/favorites`, {
+    await fetch(`http://172.20.10.3:8080/user/add/favorites`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -91,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (token) {
-        fetch("http://192.168.1.105:8080/user/profile", {
+        fetch("http://172.20.10.3:8080/user/profile", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -113,7 +113,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.topCard}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={user.profilePicture ? { uri: `http://192.168.1.105:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
+                        source={user.profilePicture ? { uri: `http://172.20.10.3:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
                         style={{ width: '100%', height: '100%' }}
                     />
                 </View>
@@ -133,7 +133,7 @@ const HomeScreen = ({ navigation }) => {
                     </Text>
                 </View>
 
-                <View style={styles.infoContainer}>
+                <View style={styles.infoContainerInfo}>
                     <Text style={styles.infoText}>
                         {user ? user.name : 'Loading...'}
                     </Text>
@@ -177,7 +177,7 @@ const HomeScreen = ({ navigation }) => {
                 <View style={[styles.profileCardFriend, styles.scrollCard]}>
                     <View style={styles.friendImageContainer}>
                     <Image
-                        source={user.profilePicture ? { uri: `http://192.168.1.105:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
+                        source={user.profilePicture ? { uri: `http://172.20.10.3:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
                         style={{ width: '100%', height: '100%' }}
                         resizeMode='cover'
                     />
@@ -312,7 +312,11 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between"
-  }
+  },
+  infoContainerInfo: {
+    alignItems: "flex-end",
+    gap: 7
+  },
 
   
 });

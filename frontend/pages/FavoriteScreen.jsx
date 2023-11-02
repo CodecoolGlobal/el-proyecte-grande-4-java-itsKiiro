@@ -25,7 +25,7 @@ const FavoriteScreen = () => {
 
     useEffect(() => {
         if (token) {
-            fetch("http://192.168.1.105:8080/user/profile", {
+            fetch("http://172.20.10.3:8080/user/profile", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,7 +40,7 @@ const FavoriteScreen = () => {
 
     useEffect(() => {
         const fetchFavorites = async (id) => {
-            const storedUsers = await fetch(`http://192.168.1.105:8080/user/${id}/favorites`)
+            const storedUsers = await fetch(`http://172.20.10.3:8080/user/${id}/favorites`)
             .then((res) => res.json())
 
             setFavorites(storedUsers);
@@ -56,7 +56,7 @@ const FavoriteScreen = () => {
     }
 
     const handleDelete = (alias) => {
-        fetch(`http://192.168.1.105:8080/user/delete/favorite`, {
+        fetch(`http://172.20.10.3:8080/user/delete/favorite`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -89,7 +89,7 @@ const FavoriteScreen = () => {
                             <View style={[styles.profileCardFriend, styles.scrollCard]}>
                                 <View style={styles.friendImageContainer}>
                                 <Image
-                                    source={user.profilePicture ? { uri: `http://192.168.1.105:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
+                                    source={user.profilePicture ? { uri: `http://172.20.10.3:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
                                     style={{ width: '100%', height: '100%' }}
                                     resizeMode='cover'
                                 />

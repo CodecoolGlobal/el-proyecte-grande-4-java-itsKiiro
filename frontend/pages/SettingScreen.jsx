@@ -32,7 +32,7 @@ const SettingScreen = () => {
 
     useEffect(() => {
         if (token) {
-            fetch("http://192.168.1.105:8080/user/profile", {
+            fetch("http://172.20.10.3:8080/user/profile", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const SettingScreen = () => {
           name: 'profilePic.jpg',
         });
         
-        fetch(`http://192.168.1.105:8080/user/upload/${user.alias}`, {
+        fetch(`http://172.20.10.3:8080/user/upload/${user.alias}`, {
           method: 'POST',
           headers: {
             "Content-Type": "multipart/form-data"
@@ -102,7 +102,7 @@ const SettingScreen = () => {
     }
 
     const handleEdit = async (alias) => {
-        await fetch(`http://192.168.1.105:8080/user/update/profile/${alias}`, {
+        await fetch(`http://172.20.10.3:8080/user/update/profile/${alias}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
@@ -131,7 +131,7 @@ const SettingScreen = () => {
             await new Promise(resolve => setTimeout(resolve, 2000)); 
             
             if (token) {
-                fetch("http://192.168.1.105:8080/user/profile", {
+                fetch("http://172.20.10.3:8080/user/profile", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -165,7 +165,7 @@ const SettingScreen = () => {
             >
                 <View style={styles.imageContainer}>
                     <Image 
-                        source={user.profilePicture ? { uri: `http://192.168.1.105:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
+                        source={user.profilePicture ? { uri: `http://172.20.10.3:8080/user/${user.alias}/profilePicture` } : profilePlaceholderImage}
                         style={{ width: 100, height: 100, borderRadius: 100 }}
                     />
                     <Button title="Choose Picture" onPress={() => pickImage()} />

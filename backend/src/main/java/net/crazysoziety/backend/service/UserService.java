@@ -10,4 +10,5 @@ public interface UserService {
     List<User> findNearbyUsers(double latitude, double longitude);
     List<User> getAddedUsersByUserId(int userId);
     List<User> getFavUsersByUserId(int userId);
+    void updateGeom(User user, double latitude, double longitude);
 }
