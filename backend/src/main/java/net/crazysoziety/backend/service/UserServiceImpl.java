@@ -1,13 +1,17 @@
 package net.crazysoziety.backend.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+import net.crazysoziety.backend.controller.FriendRequest;
 import net.crazysoziety.backend.model.User;
+import net.crazysoziety.backend.model.UserDTO;
 import net.crazysoziety.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,11 +19,15 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final TokenServiceImpl tokenService;
 
-    @Autowired
-    private EntityManager entityManager;
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, TokenServiceImpl tokenService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
+    }
 
     @Override
     @Transactional
@@ -33,45 +41,81 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findNearbyUsers(double latitude, double longitude) {
-        double distanceInMeters = 10;
-        return userRepository.findNearbyUsers(latitude, longitude, distanceInMeters);
-    }
-
-    @Override
     public List<User> getAddedUsersByUserId(int userId) {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isPresent()) {
             return user.get().getAddedUsers();
         } else {
-
             return new ArrayList<>();
         }
-
     }
 
     @Override
-    public List<User> getFavUsersByUserId(int userId) {
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.isPresent()) {
-            return user.get().getFavorites();
-        } else {
-
-            return new ArrayList<>();
-        }
-
+    public void createNewUser(User user) {
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+        saveUser(user);
     }
 
     @Override
-    @Transactional
-    public void updateGeom(User user, double latitude, double longitude) {
-        String sql = "UPDATE users SET geom = ST_SetSRID(ST_Point(:longitude, :latitude), 4326) WHERE id = :userId";
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter("latitude", latitude);
-        query.setParameter("longitude", longitude);
-        query.setParameter("userId", user.getId());
-        query.executeUpdate();
+    public String checkLogin(User user) {
+        User foundUser = findByAlias(user.getAlias());
+
+        if (foundUser == null) {
+            return "User not found";
+        }
+
+        if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
+            return "Incorrect password";
+        }
+        return tokenService.generateToken(foundUser);
+    }
+
+    @Override
+    public UserDTO getProfile(String authHeader) {
+        String token = authHeader.substring(7);
+        String cleanedToken = token.replace("\"", "");
+        String userAlias = tokenService.extractAlias(cleanedToken);
+        User user = findByAlias(userAlias);
+        return new UserDTO(
+                user.getAlias(),
+                user.getId(),
+                user.getEmail(),
+                user.getName(),
+                user.getProfilePicture(),
+                user.getBirthdate());
+    }
+
+    @Override
+    public String uploadProfilePicture(MultipartFile file, String alias) throws IOException {
+        byte[] imageBytes = file.getBytes();
+
+        User foundUser = findByAlias(alias);
+        foundUser.setProfilePicture(imageBytes);
+        saveUser(foundUser);
+
+        return "picture uploaded.";
+    }
+
+    @Override
+    public String updateUser(User updateInfo, String alias) {
+        User user = findByAlias(alias);
+
+        user.setName(updateInfo.getName());
+        user.setPassword(updateInfo.getPassword());
+        user.setEmail(updateInfo.getEmail());
+        user.setAlias(updateInfo.getAlias());
+        saveUser(user);
+        return "User updated";
+    }
+
+    @Override
+    public String addFriend(FriendRequest friendRequest) {
+        User user = findByAlias(friendRequest.userAlias());
+        user.getAddedUsers().add(friendRequest.userToAdd());
+        saveUser(user);
+
+        return "User added successfully";
     }
 }

@@ -1,4 +1,4 @@
-package net.crazysoziety.backend.model;
+package net.crazysoziety.backend.controller;
 
 public class LocationRequest {
     private String userAlias;
