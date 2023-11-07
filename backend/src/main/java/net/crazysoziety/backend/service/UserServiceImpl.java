@@ -1,12 +1,10 @@
 package net.crazysoziety.backend.service;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import net.crazysoziety.backend.controller.FriendRequest;
 import net.crazysoziety.backend.model.User;
 import net.crazysoziety.backend.model.UserDTO;
 import net.crazysoziety.backend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

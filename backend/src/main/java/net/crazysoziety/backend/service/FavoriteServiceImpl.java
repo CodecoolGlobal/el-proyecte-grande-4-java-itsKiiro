@@ -1,11 +1,8 @@
 package net.crazysoziety.backend.service;
 
-import jakarta.persistence.EntityManager;
 import net.crazysoziety.backend.controller.FavoriteRequest;
 import net.crazysoziety.backend.model.User;
 import net.crazysoziety.backend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;

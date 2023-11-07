@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "SELECT * FROM users WHERE ST_DWithin(geom, ST_SetSRID(ST_Point(:longitude, :latitude), 4326), :distance)", nativeQuery = true)
     List<User> findNearbyUsers(@Param("latitude") double latitude, @Param("longitude") double longitude, @Param("distance") double distance);
+
+    @Query(value = "UPDATE users SET geom = ST_SetSRID(ST_Point(:longitude, :latitude), 4326) WHERE id = :userId", nativeQuery = true)
+    void updateGeom(@Param("userId") int userId, @Param("longitude") double longitude, @Param("latitude") double latitude);
 }
