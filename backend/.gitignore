@@ -32,5 +32,5 @@ build/
 ### VS Code ###
 .vscode/
 
-# Ignoring application.properties
-src/main/resources/application.properties
+# Ignoring application-prod.yml
+src/main/resources/application-prod.yml
